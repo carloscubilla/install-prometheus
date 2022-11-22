@@ -1,0 +1,5 @@
+---
+- name: Playbok para instalar prometheus
+  hosts: all
+  roles:
+    - roles/

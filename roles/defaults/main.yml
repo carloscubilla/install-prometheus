@@ -1,0 +1,2 @@
+---
+prometheus: https://github.com/prometheus/prometheus/releases/download/v2.40.2/prometheus-2.40.2.linux-amd64.tar.gz
