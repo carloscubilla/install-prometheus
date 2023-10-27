@@ -1,0 +1,55 @@
+ sudo groupadd prometheus
+ sudo useradd --system -s /sbin/nologin -g prometheus prometheus
+
+
+
+ sudo firewall-cmd --permanent --add-port=9153/tcp
+ sudo firewall-cmd --reload
+
+
+ wget -q https://github.com/prometheus-community/bind_exporter/releases/download/v0.7.0/bind_exporter-0.7.0.linux-amd64.tar.gz
+
+  sudo tar --strip-components=1 -xf bind_exporter-0.7.0.linux-amd64.tar.gz -C /usr/local/bin/
+  sudo chown -R root: /usr/local/bin/
+  vim /etc/systemd/system/bind_exporter.service
+  
+  
+  [Unit]
+Description=Prometheus
+Documentation=https://github.com/prometheus-community/bind_exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=prometheus
+Group=prometheus
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/local/bin/bind_exporter \
+  --bind.pid-file=/var/run/named/named.pid \
+  --bind.timeout=20s \
+  --web.listen-address=0.0.0.0:9153 \
+  --web.telemetry-path=/metrics \
+  --bind.stats-url=http://127.0.0.1:8053/ \
+  --bind.stats-groups=server,view,tasks
+
+SyslogIdentifier=prometheus
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+  
+  
+  
+  
+  
+  
+  
+  sudo chown -R root: /etc/systemd/system/bind_exporter.service
+  sudo chmod 0644 /etc/systemd/system/bind_exporter.service
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now bind_exporter
+   
+   
+   
+  
